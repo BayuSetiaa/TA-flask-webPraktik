@@ -1,0 +1,309 @@
+<!-- add_student Modal -->
+<div
+  class="modal fade"
+  id="addStudentForm"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex">
+          <img src="../static/images/SSISlogo.png" alt="SSIS logo" />
+          <h5 class="modal-title" id="studentformtitle">
+            Tambah Mahasiswa Baru
+          </h5>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form
+          class="needs-validation"
+          action="{{ url_for('student.add') }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="image-container flex-column">
+            <div class="image-wrapper">
+              <div class="image">
+                <img
+                  id="add-selected-image"
+                  src="../static/images/student-profile-template.png"
+                  alt=""
+                />
+              </div>
+              <div id="file-name" hidden></div>
+            </div>
+            <div>
+              <input
+                type="file"
+                class="form-control"
+                accept="image/png, image/jpeg"
+                id="add-image-inp"
+                value=""
+                name="selected-image"
+                required
+                hidden
+              />
+              <button onclick="addImage()" id="custom-btn" type="button">
+                Pilih Foto
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="student-id" class="form-label">NPM</label>
+            <input
+              type="text"
+              class="form-control"
+              id="student-id"
+              name="student-id"
+              placeholder="10-digit number"
+              maxlength="10"
+              pattern="^[0-9]{4}-[0-9]{4}$|^[0-9]{10}$"
+              required
+            />
+            <small id="IDhelp" class="form-text text-muted"
+              >Silakan ikuti format berikut. Contoh: 5220411230
+            </small>
+
+            <div class="invalid-feedback">Silakan masukkan NPM</div>
+          </div>
+          <div class="mb-3">
+            <label for="firstname" class="form-label">Nama Depan</label>
+            <input
+              type="studentinfo"
+              class="form-control"
+              id="firstname"
+              name="firstname"
+              required
+            />
+            <div class="invalid-feedback">Silakan masukkan Nama Depan</div>
+          </div>
+          <div class="mb-3">
+            <label for="middlename" class="form-label">Nama Tengah</label>
+            <input
+              type="studentinfo"
+              class="form-control"
+              id="middlename"
+              name="middlename"
+            />
+            <small id="middlenameHelp" class="form-text text-muted"
+              >Kosongkan jika tidak berlaku</small
+            >
+          </div>
+          <div class="mb-3">
+            <label for="lastname" class="form-label" required
+              >Nama Belakang</label
+            >
+            <input
+              type="studentinfo"
+              class="form-control"
+              id="lastname"
+              name="lastname"
+            />
+            <div class="invalid-feedback">Silakan masukkan Nama Belakang</div>
+          </div>
+          <div class="mb-3">
+            <label for="gender" class="form-label">Jenis Kelamin</label>
+            <select id="gender" name="gender" class="form-select">
+              <option value="Laki-Laki">Laki-Laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="yearlevel" class="form-label">Semester</label>
+            <select id="yearlevel" name="yearlevel" class="form-select">
+              {% for year in range (1,9) %}
+              <option value="{{year}}">{{year}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="course" class="form-label">Prodi</label>
+            <select id="course" name="course" class="form-select">
+              {% for course in data[1] %}
+              <option value="{{course[1]}}" name="course">{{course[1]}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="addstudentclicked"
+            >
+              Tambah Mahasiswa
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add_course Modal  -->
+<div
+  class="modal fade"
+  id="addCourseForm"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex">
+          <img src="../static/images/SSISlogo.png" alt="SSIS logo" />
+          <h5 class="modal-title" id="courseformtitle">Tambah Prodi Baru</h5>
+        </div>
+        <button
+          class="btn-close"
+          type="button"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form
+          action="{{ url_for('course.add') }}"
+          class="needs-validation"
+          method="post"
+        >
+          <div class="mb-3">
+            <label for="course-code" class="form-label">Kode Prodi</label>
+            <input
+              type="courseinfo"
+              class="form-control"
+              id="course-code"
+              name="course-code"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="course-name" class="form-label">Nama Prodi</label>
+            <input
+              type="courseinfo"
+              class="form-control"
+              id="course-name"
+              name="course-name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="course-college" class="form-label">Fakultas</label>
+            <select
+              name="course-college"
+              id="course-college"
+              class="form-select"
+            >
+              {% for college in data[2] %}
+              <option value="{{college.1}}" name="college">
+                {{college.1}}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button class="btn btn-primary" type="submit" id="addCourseclicked">
+              Tambah Prodi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- add_college Modal  -->
+<div
+  class="modal fade"
+  id="addCollegeForm"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="d-flex">
+          <img src="../static/images/SSISlogo.png" alt="SSIS logo" />
+          <h5 class="modal-title" id="courseformtitle">Tambah Fakultas Baru</h5>
+        </div>
+        <button
+          class="btn-close"
+          type="button"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form
+          action="{{ url_for('college.add') }}"
+          class="needs-validation"
+          method="post"
+        >
+          <div class="mb-3">
+            <label for="college-code" class="form-label">Kode Fakultas</label>
+            <input
+              type="courseinfo"
+              class="form-control"
+              id="college-code"
+              name="college-code"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="college-name" class="form-label">Nama Fakultas</label>
+            <input
+              type="courseinfo"
+              class="form-control"
+              id="college-name"
+              name="college-name"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-bs-dismiss="modal"
+            >
+              Batal
+            </button>
+            <button class="btn btn-primary" type="submit" id="addCourseclicked">
+              Tambah Fakultas
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

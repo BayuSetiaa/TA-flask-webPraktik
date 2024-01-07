@@ -1,0 +1,226 @@
+{% extends "base.html" %} {% block title %}
+<title>Fakultas</title>
+{% endblock %} {% block navigation %}
+<div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
+  <ul class="navbar-nav">
+    <li class="nav-item" id="btn-student">
+      <a href="{{url_for('student.students')}}" class="nav-link">Mahasiswa</a>
+    </li>
+    <li class="nav-item" id="btn-courses">
+      <a href="{{url_for('course.courses')}}" class="nav-link">Prodi</a>
+    </li>
+    <li class="nav-item active" id="btn-colleges">
+      <a
+        href="{{url_for('college.colleges')}}"
+        class="nav-link active"
+        id="activeLink"
+        >Fakultas</a
+      >
+    </li>
+  </ul>
+</div>
+{% endblock %} {% block table %}
+<table class="table table-hover caption-top table-responsive-xl">
+  <caption>
+    <div id="caption">
+      <div
+        class="d-flex align-items-center caption-upper"
+        style="background-color: #073770"
+      >
+        <h4 class="p-2" id="table-title" style="color: white">
+          DAFTAR FAKULTAS
+        </h4>
+        <button
+          class="btn btn-primary"
+          id="addNew"
+          data-bs-toggle="modal"
+          data-bs-target="#addCollegeForm"
+        >
+          <img
+            src="../static/images/addcollegeICON.png"
+            alt=""
+            id="addcollegeICON"
+          />
+        </button>
+      </div>
+      <div>
+        <form
+          class="pt-3 pb-3 d-flex align-items-center caption-lower"
+          method="post"
+          action="{{url_for('college.search')}}"
+        >
+          <select id="field" name="field" class="form-select p-2">
+            <option value="select">Pilih</option>
+            <option value="code">Kode Fakultas</option>
+            <option value="name">Nama Fakultas</option>
+          </select>
+          <input
+            id="searchfield"
+            type="text"
+            class="p-2 m-2 searchfield"
+            name="user-input"
+            placeholder="Ketik untuk mencari menggunakan Kode Fakultas, dan Nama Fakultas"
+          />
+          <button class="btn-search">
+            <div class="search">
+              <div class="icon"></div>
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+    {% include "/includes/alert_message.html"%}
+  </caption>
+
+  <thead class="table-light">
+    <tr>
+      <th scope="col">Kode</th>
+      <th scope="col">Fakultas</th>
+      <th scope="col">Jumlah Prodi</th>
+      <th scope="col">Jumlah Mahasiswa</th>
+      <th scope="col">Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for college in data[2] %}
+    <tr
+      data-bs-toggle="modal"
+      data-bs-target="#CollegeDepartments{{college.0}}"
+    >
+      <th><b>{{college.0}}</b></th>
+      <td>{{college.1}}</td>
+      <td>{{college.2}}</td>
+      <td>{{college.3}}</td>
+      <td>
+        <a
+          href="{{url_for('college.update', id=college.0)}}"
+          class="btn btn-warning"
+          data-bs-toggle="modal"
+          data-bs-target="#editCollegeForm{{college.0}}"
+          >Update</a
+        >
+        <a
+          href="{{url_for('college.delete', id=college.0)}}"
+          class="btn btn-danger"
+          onclick="return confirm('Are you sure you want to remove {{college.1}} ?')"
+          >Delete</a
+        >
+      </td>
+    </tr>
+
+    <!-- edit_course Modal  -->
+    <div
+      class="modal fade"
+      id="editCollegeForm{{college.0}}"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="d-flex">
+              <img src="../static/images/SSISlogo.png" alt="SSIS logo" />
+              <h5 class="modal-title" id="courseformtitle">Edit Fakultas</h5>
+            </div>
+            <button
+              class="btn-close"
+              type="button"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <form
+              action="{{ url_for('college.update', id=college.0) }}"
+              class="needs-validation"
+              method="post"
+            >
+              <div class="mb-3">
+                <label for="college-code" class="form-label"
+                  >Kode Fakultas</label
+                >
+                <input
+                  type="collegeinfo"
+                  class="form-control"
+                  id="college-code"
+                  value="{{college.0}}"
+                  name="college-code"
+                  disabled
+                />
+              </div>
+              <div class="mb-3">
+                <label for="college-name" class="form-label"
+                  >Nama Fakultas</label
+                >
+                <input
+                  type="collegeinfo"
+                  class="form-control"
+                  id="college-name"
+                  value="{{college.1}}"
+                  name="college-name"
+                  required
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  data-bs-dismiss="modal"
+                >
+                  Batal
+                </button>
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  id="addCourseclicked"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- view_courses Modal  -->
+    <div
+      class="modal fade"
+      id="CollegeDepartments{{college.0}}"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="d-flex college-logo">
+              <div class="logo">
+                <img
+                  src="../static/entity_photos/colleges/{{(college[1].lower()).replace('%20', ' ')}}.jpg"
+                />
+              </div>
+            </div>
+            <button
+              class="btn-close"
+              type="button"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            {% for department in data[3] %} {% if department.0 == college.0 %}
+            <p>{{department.1}}</p>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
